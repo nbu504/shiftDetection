@@ -107,8 +107,8 @@ for contour in contours:
         print(type(contour_new), contour_new.shape)
         print(type(contour), contour.shape)
         cv.drawContours(clip_img, contour_new, -1, (0, 0, 255), 1)
-        contour_new = np.concatenate((contour_new, [[[1, 1]]]), axis=0)
-        print(contour_new.shape)
+        # contour_new = np.concatenate((contour_new, [[[1, 1]]]), axis=0)
+        # print(contour_new.shape)
 #cv.imwrite('pic/maocao.jpg', clip_img)
 
 jsonResult = {'contours': storeOriContour.tolist(),

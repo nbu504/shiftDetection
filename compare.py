@@ -3,6 +3,25 @@ import cv2 as cv
 import numpy as np
 import json
 
+def areaCal(img):
+    # 白像素面积计算
+    area = 0
+    height, width, _ = img.shape
+    for i in range(height):
+        for j in range(width):
+            if img[i, j] == 255:
+                area += 1
+    return area
+
+def contourDrawer(points, img):
+    # 边缘连接
+    for index, item in enumerate(points):
+        if index == len(points) - 1:
+            break
+        pointSet = tuple(item[0])
+        nextPointSet = tuple(points[index + 1][0])
+        cv.line(img, pointSet, nextPointSet, (0, 0, 255), 1)
+
 # 获取原图数据
 with open('data.json', 'r') as f:
     data = json.load(f)
@@ -76,11 +95,32 @@ for contour in contours:
 
 cv.line(clip_img, oriMidlinePoints[0], oriMidlinePoints[1], (0, 0, 255), 2)
 
+# 边缘不同画图方式
+# cv.polylines(clip_img,[oriContours],True,(0, 0, 255))
 cv.drawContours(clip_img, oriContours, -1, (0, 0, 255), 1)
+# contourDrawer(oriContours, clip_img)
 
+
+# cv.polylines(clip_img,[oriExpandContours],True,(0, 0, 255))
 cv.drawContours(clip_img, oriExpandContours, -1, (0, 0, 255), 1)
+# contourDrawer(oriExpandContours, clip_img)
 
 cv.imshow("image line", clip_img)
+
+# 原图扩大边缘后mask
+mask_img = np.zeros((clip_img.shape[0], clip_img.shape[1], 1), np.uint8)
+cv.fillPoly(mask_img, pts =[oriExpandContours], color=(255,255,255))
+oriArea = areaCal(mask_img)
+cv.imshow("ori mask", mask_img)
+
+
+cv.fillPoly(mask_img, pts =[contour_new], color=(255,255,255))
+newArea = areaCal(mask_img)
+cv.imshow("new mask", mask_img)
+
+# 计算新图增加白色面积
+bulgeArea = newArea - oriArea
+print "oriArea: %d, newArea: %d, bulgeArea: %d, percent: %.5f%%" %(oriArea, newArea, bulgeArea, float(bulgeArea) / oriArea * 100)
 
 cv.waitKey()
 cv.destroyAllWindows()
