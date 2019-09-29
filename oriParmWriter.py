@@ -58,7 +58,8 @@ A = mid_y2 - mid_y1
 B = - (mid_x2 - mid_x1)
 C = (mid_y1 - mid_x1) * (mid_x2 - mid_x1)
 
-_, contours, hierarchy = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+contours, hierarchy = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+# _, contours, hierarchy = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 for contour in contours:
     if cv.contourArea(contour) > 1000.0:
         cv.drawContours(clip_img, contour, -1, (0, 0, 255), 1)
