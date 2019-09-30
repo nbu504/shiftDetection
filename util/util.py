@@ -27,7 +27,7 @@ def getData(filename):
         shape = data['shape']
         expandContours = np.array(data['expandContours'])
         contours = np.array(data['contours'])
-        midlinePoints = [tuple(x) for x in data['midlinePoint']]
+        midlinePoints = [tuple(x) for x in data['midlinePoints']]
 
     return {"shape": shape,
             "expandContours": expandContours,

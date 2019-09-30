@@ -1,7 +1,6 @@
 # coding: utf8
 import cv2 as cv
 import numpy as np
-import json
 from util.util import writeData
 
 def img_slicer(img, left_top_l, left_top_w, right_bottle_l, right_bottle_w):
@@ -51,8 +50,8 @@ def data_producer(img_name, left_top_l, left_top_w, right_bottle_l, right_bottle
     B = - (mid_x2 - mid_x1)
     C = (mid_y1 - mid_x1) * (mid_x2 - mid_x1)
 
-    contours, hierarchy = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-    # _, contours, hierarchy = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    # contours, hierarchy = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    _, contours, hierarchy = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
     for contour in contours:
         if cv.contourArea(contour) > 1000.0:
             cv.drawContours(clip_img, contour, -1, (0, 0, 255), 1)
@@ -93,7 +92,7 @@ def data_producer(img_name, left_top_l, left_top_w, right_bottle_l, right_bottle
 
     jsonResult = {'shape': clip_img.shape,
                   'contours': storeOriContour.tolist(),
-                  'midlinePoint': [(mid_x1, mid_y1), (mid_x2, mid_y2)],
+                  'midlinePoints': [(mid_x1, mid_y1), (mid_x2, mid_y2)],
                   'expandContours': contour_new.tolist()}
 
     writeData('data/' + img_name + '.json', jsonResult)
