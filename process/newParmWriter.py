@@ -92,7 +92,7 @@ def data_producer(img_name, left_top_l, left_top_w, right_bottle_l, right_bottle
 
     jsonResult = {'shape': clip_img.shape,
                   'contours': [ls],
-                  'midlinePoint': [(mid_x1, mid_y1), (mid_x2, mid_y2)],
+                  'midlinePoints': [(mid_x1, mid_y1), (mid_x2, mid_y2)],
                   'expandContours': contour_new.tolist()}
 
     writeData('../data/' + img_name + '1.json', jsonResult)

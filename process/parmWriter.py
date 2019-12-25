@@ -1,7 +1,8 @@
 # coding: utf8
 import cv2 as cv
+import math
 import numpy as np
-from util.util import writeData
+from util.util import writeData, rotate_bound
 
 def img_slicer(img, left_top_l, left_top_w, right_bottle_l, right_bottle_w):
     # 图片切割
@@ -44,11 +45,16 @@ def data_producer(img_name, left_top_l, left_top_w, right_bottle_l, right_bottle
     ls.append((mid_x1, mid_y1))
     ls.append((mid_x2, mid_y2))
 
-    cv.line(clip_img, (mid_x1, mid_y1), (mid_x2, mid_y2), (0, 0, 255), 2)
+    cv.line(clip_img, (mid_x1, mid_y1), (mid_x2, mid_y2), (0, 0, 254), 2)
     # 中轴直线参数
     A = mid_y2 - mid_y1
     B = - (mid_x2 - mid_x1)
     C = (mid_y1 - mid_x1) * (mid_x2 - mid_x1)
+
+    rotateParamA = mid_y1 - mid_y2
+    rotateParamB = mid_x2 - mid_x1
+    angle = math.atan2(rotateParamA, rotateParamB)
+    theta = angle * (180 / math.pi)
 
     # contours, hierarchy = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
     _, contours, hierarchy = cv.findContours(binary, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -88,7 +94,7 @@ def data_producer(img_name, left_top_l, left_top_w, right_bottle_l, right_bottle
 
             contour_new = np.array(contour_new)
 
-            cv.drawContours(clip_img, contour_new, -1, (0, 0, 255), 1)
+            # cv.drawContours(clip_img, contour_new, -1, (0, 0, 255), 1)
 
     jsonResult = {'shape': clip_img.shape,
                   'contours': storeOriContour.tolist(),
@@ -96,5 +102,22 @@ def data_producer(img_name, left_top_l, left_top_w, right_bottle_l, right_bottle
                   'expandContours': contour_new.tolist()}
 
     writeData('data/' + img_name + '.json', jsonResult)
+
+    # 图像旋转
+    M, test = rotate_bound(clip_img, theta)
+    rotatedContours = []
+    for contour in contour_new:
+        rotatedContours.append(np.dot(M, np.array([[contour[0][0]], [contour[0][1]], [1]])).tolist())
+
+    aa = np.array(rotatedContours)
+    z = np.argmax(aa[:, 0])
+    # print aa[z][0][0], aa[z][1][0]
+    cv.circle(test, (int(aa[z][0][0]), int(aa[z][1][0])), 10, (255, 255 ,0), 4)
+
+    cv.namedWindow("rotate", 0)
+    cv.resizeWindow("rotate", 1040, 1080)
+    cv.imshow('rotate', test)
+    cv.waitKey()
+    # cv.destroyAllWindows()
 
     return clip_img

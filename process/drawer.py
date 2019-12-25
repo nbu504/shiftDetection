@@ -1,5 +1,6 @@
 from util.util import getData
 from process.parmWriter import img_slicer
+from process.newParmWriter import data_producer
 import cv2 as cv
 
 
@@ -8,6 +9,8 @@ img = cv.imread('../pic/original.jpg')
 
 clip_0_ll, clip_0_lw, clip_0_rl, clip_0_rw = 1200, 1000, 2300, 1700
 clip_img = img_slicer(img, clip_0_ll, clip_0_lw, clip_0_rl, clip_0_rw)
+
+data_producer('original.jpg', clip_0_ll, clip_0_lw, clip_0_rl, clip_0_rw)
 
 data = getData('../data/original.jpg1.json')
 

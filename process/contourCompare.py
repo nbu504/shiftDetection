@@ -23,12 +23,12 @@ def drawer(img, standardData, toCompareData):
     cv.fillPoly(mask_img, pts=[toCompareData['contours']], color=(255, 255, 255))
     cv.imshow('new_contour', mask_img)
 
-    cv.waitKey()
+    cv.waitKey(0)
     cv.destroyAllWindows()
 
 def compare(standardImgName, toCompareImgName, threshHold):
-    standardData = getData(standardImgName)
-    toCompareData = getData(toCompareImgName)
+    standardData = getData('data/' + standardImgName + '.json')
+    toCompareData = getData('data/' + toCompareImgName + '.json')
 
     # 原图扩大边缘后mask
     mask_img = np.zeros((toCompareData['shape'][0], toCompareData['shape'][1], 1), np.uint8)
